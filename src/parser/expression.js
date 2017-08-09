@@ -705,6 +705,9 @@ export default class ExpressionParser extends LValParser {
       case tt.bigint:
         return this.parseLiteral(this.state.value, "BigIntLiteral");
 
+      case tt.dice:
+        return this.parseDice(this.state.value);
+
       case tt.string:
         return this.parseLiteral(this.state.value, "StringLiteral");
 
@@ -831,6 +834,17 @@ export default class ExpressionParser extends LValParser {
       );
     }
     return this.parseMetaProperty(node, id, "meta");
+  }
+
+  parseDice(value: any): N.DiceLiteral {
+    const startPos = this.state.start;
+    const node = this.startNodeAt(startPos, this.state.startLoc);
+    this.addExtra(node, "rawValue", value);
+    this.addExtra(node, "raw", this.input.slice(startPos, this.state.end));
+    node.coefficient = value.coefficient;
+    node.sides = value.sides;
+    this.next();
+    return this.finishNode(node, "DiceLiteral");
   }
 
   parseLiteral<T: N.Literal>(

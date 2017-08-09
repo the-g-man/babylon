@@ -761,6 +761,16 @@ export default class Tokenizer extends LocationParser {
     return total;
   }
 
+  readDice(coefficient: number): void {
+    const start = this.state.pos;
+    this.readInt(10);
+    const str = this.input.slice(start, this.state.pos);
+    return this.finishToken(tt.dice, {
+      coefficient: coefficient,
+      sides: parseInt(str),
+    });
+  }
+
   readRadixNumber(radix: number): void {
     const start = this.state.pos;
     let isBigInt = false;
@@ -817,6 +827,13 @@ export default class Tokenizer extends LocationParser {
       if (this.readInt(10) === null) this.raise(start, "Invalid number");
       isFloat = true;
       next = this.input.charCodeAt(this.state.pos);
+    }
+
+    if (next === 0x64 && !octal) {
+      // 'd'
+      const coefficient = this.input.slice(start, this.state.pos);
+      this.state.pos++;
+      return this.readDice(parseInt(coefficient, 10));
     }
 
     if (this.hasPlugin("bigInt")) {

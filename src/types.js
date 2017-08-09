@@ -85,7 +85,8 @@ export type Literal =
   | NullLiteral
   | StringLiteral
   | BooleanLiteral
-  | NumericLiteral;
+  | NumericLiteral
+  | DiceLiteral;
 
 export type RegExpLiteral = NodeBase & {
   type: "RegExpLiteral",
@@ -115,6 +116,12 @@ export type NumericLiteral = NodeBase & {
 export type BigIntLiteral = NodeBase & {
   type: "BigIntLiteral",
   value: number,
+};
+
+export type DiceLiteral = NodeBase & {
+  type: "DiceLiteral",
+  coefficient: number,
+  sides: number,
 };
 
 // Programs
